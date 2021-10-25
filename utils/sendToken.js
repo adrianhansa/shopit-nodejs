@@ -10,7 +10,13 @@ const sendToken = (user, statusCode, res) => {
     },
     process.env.JWT_SECRET
   );
-  res.status(statusCode).header("token", token).json({ isAuth: true, token });
+  res.status(statusCode).header("token", token).json({
+    id: user._id,
+    isAdmin: user.isAdmin,
+    fullName: user.name,
+    email: user.email,
+    token: token,
+  });
 };
 
 module.exports = sendToken;

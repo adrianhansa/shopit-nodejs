@@ -54,7 +54,12 @@ const register = async (req, res) => {
         .status(400)
         .json({ message: "This user already exists. Please login" });
     }
-    const user = await User.create({ name, email, password, isAdmin });
+    const user = await User.create({
+      name,
+      email,
+      password: passwordHashed,
+      isAdmin,
+    });
     sendToken(user, 200, res);
   } catch (error) {
     return res.status(200).json({ message: error.message });
