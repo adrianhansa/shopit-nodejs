@@ -45,8 +45,6 @@ const register = async (req, res) => {
         .json({ message: "The two passwords do not match" });
     }
 
-    const passwordHashed = await bcrypt.hash(password, 10);
-
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
@@ -56,7 +54,7 @@ const register = async (req, res) => {
     const user = await User.create({
       name,
       email,
-      password: passwordHashed,
+      password,
       isAdmin,
     });
     sendToken(user, 200, res);
@@ -68,8 +66,14 @@ const register = async (req, res) => {
 const profile = async (req, res) => {
   try {
     //
+    const user = await User.findById(req.user.id);
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(400).json({ message: "User not found" });
+    }
   } catch (error) {
-    return res.status(200).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 

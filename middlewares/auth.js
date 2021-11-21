@@ -1,16 +1,20 @@
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
-  const token = req.header("token");
-  try {
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
     const userVerified = jwt.verify(token, process.env.JWT_SECRET);
     req.user = userVerified;
-  } catch (error) {
+    next();
+  } else {
     return res
-      .status(403)
+      .status(401)
       .json({ message: "Unauthorized access. Invalid token." });
   }
-  next();
 };
 
 module.exports = auth;
